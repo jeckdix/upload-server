@@ -39,8 +39,15 @@ app.get("/", (req, res) => {
 
 app.get("/uploads/:filename", (req, res) => {
   const filename = req.params.filename;
+  const filePath = path.join(__dirname, "./uploads", filename);
+
   // Code to serve file here
-  return res.sendFile(path.join(__dirname, "./uploads", filename));
+
+  if (fs.existsSync(filePath)) {
+    return res.sendFile(filePath);
+  }
+
+  return res.status(404).json({ success: false, error: "unable to read file" });
 });
 
 app.post("/upload_files", upload.single("podcast"), uploadFiles);
